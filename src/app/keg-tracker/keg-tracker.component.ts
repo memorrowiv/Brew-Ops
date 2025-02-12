@@ -14,6 +14,7 @@ import { getApp } from 'firebase/app';
   styleUrls: ['./keg-tracker.component.css'],
 })
 export class KegTrackerComponent {
+  kegSizes = ['Half Barrel (15.5 gal)', 'Quarter Barrel (7.75 gal)', 'Sixth Barrel (5.16 gal)', 'Mini Keg (1.32 gal)'];
   kegs: Keg[] = [];
   private firestore!: Firestore;
 
@@ -97,7 +98,8 @@ export class KegTrackerComponent {
       } else {
         // Quantity is 1, so remove from Firestore and local array
         await this.deleteKegFromFirestore(id);
-        this.kegs.splice(kegIndex, 1); // Remove from local array
+        this.kegs.splice(kegIndex, 1);
+        await this.updateKegInFirestore(keg); 
       }
     } else {
       console.log('Keg not found or already removed');

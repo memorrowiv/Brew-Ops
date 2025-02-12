@@ -10,7 +10,9 @@
         <input type="text" id="beerName" #beerName required />
   
         <label for="kegSize">Keg Size:</label>
-        <input type="text" id="kegSize" #kegSize required />
+          <select id="kegSize" #kegSize required>
+            <option *ngFor="let size of kegSizes" [value]="size">{{ size }}</option>
+          </select>
   
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" #quantity required />

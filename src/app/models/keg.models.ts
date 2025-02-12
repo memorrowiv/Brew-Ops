@@ -3,4 +3,6 @@ export interface Keg {
     beerName: string;
     kegSize: string;
     quantity: number;
+    onTap: boolean;
+    tapNumber?: number;
   }

@@ -5,6 +5,7 @@ import { Keg } from '../models/keg.models';
 import { getFirestore, Firestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environment.prod';
 import { getApp } from 'firebase/app'; 
+import { on } from 'events';
 
 @Component({
   selector: 'app-keg-tracker',
@@ -51,7 +52,7 @@ export class KegTrackerComponent {
 
   async addKegs(beerName: string, kegSize: string, quantity: number) {
     console.log('Adding keg:', beerName, kegSize, quantity);
-    const newKeg: Keg = { id: '', beerName, kegSize, quantity };
+    const newKeg: Keg = { id: '', beerName, kegSize, quantity, onTap: false };
     await this.addKegToFirestore(newKeg);
     this.kegs.push(newKeg);
   }
@@ -71,7 +72,8 @@ export class KegTrackerComponent {
       const docRef = await addDoc(kegsCollection, {
         beerName: keg.beerName,
         kegSize: keg.kegSize,
-        quantity: keg.quantity
+        quantity: keg.quantity,
+        onTap: keg.onTap,
       });
   
       keg.id = docRef.id;

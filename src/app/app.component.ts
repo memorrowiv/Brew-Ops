@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { KegTrackerComponent } from './keg-tracker/keg-tracker.component';
+import { TapListComponent } from './tap-list/tap-list.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterModule, KegTrackerComponent, TapListComponent], // Import your components here
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'Brew-Ops';
+  title = 'brewery-front-of-house';
 }

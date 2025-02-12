@@ -14,12 +14,14 @@ import { getApp } from 'firebase/app';
 })
 export class KegTrackerComponent {
   kegs: Keg[] = [];
-  private firestore: Firestore;
+  private firestore!: Firestore; // Use definite assignment assertion
 
   constructor() {
-    const app = getApp(); // Reuse the already initialized app
-    this.firestore = getFirestore(app); // Get Firestore instance from the already initialized app
-    this.loadKegs();
+    if (typeof window !== 'undefined') {
+      const app = getApp(); // Reuse the already initialized app from AppComponent
+      this.firestore = getFirestore(app); // Get Firestore instance from the already initialized app
+      this.loadKegs();
+    }
   }
 
   // Loads kegs from Firestore
@@ -46,6 +48,7 @@ export class KegTrackerComponent {
 
   // Adds a new keg to Firestore
   async addKegs(beerName: string, kegSize: string, quantity: number) {
+    console.log('Adding keg:', beerName, kegSize, quantity);
     const newKeg: Keg = { id: '', beerName, kegSize, quantity };
     await this.addKegToFirestore(newKeg);
     this.kegs.push(newKeg); // Add to local array for immediate update

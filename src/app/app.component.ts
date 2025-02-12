@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, Firestore, doc, setDoc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, Firestore } from 'firebase/firestore';
 import { environment } from '../environments/environment.prod';
 import { KegTrackerComponent } from './keg-tracker/keg-tracker.component';
 import { TapListComponent } from './tap-list/tap-list.component';
@@ -21,15 +21,18 @@ import { RouterModule } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'brewery-front-of-house';
-  private firestore: Firestore;
+  private firestore!: Firestore; // Using definite assignment assertion
 
   constructor() {
-    const app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
-    this.firestore = getFirestore(app); // Get Firestore instance
-    console.log('Firebase initialized:', app);
+    // Ensure Firebase initializes only in the browser environment
+    if (typeof window !== 'undefined') {
+      const app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
+      this.firestore = getFirestore(app); // Get Firestore instance
+      console.log('Firebase initialized:', app);
+    }
   }
 
   ngOnInit() {
+    // Additional client-side initialization can be done here
   }
-
 }

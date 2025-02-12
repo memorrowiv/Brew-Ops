@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [
+    CommonModule,
     KegTrackerComponent,
     TapListComponent,
     AngularFirestoreModule,

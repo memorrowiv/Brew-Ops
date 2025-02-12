@@ -67,12 +67,21 @@ export class KegTrackerComponent {
   async addKegToFirestore(keg: Keg) {
     try {
       const kegsCollection = collection(this.firestore, 'kegs');
-      const docRef = await addDoc(kegsCollection, keg);
+      
+      const docRef = await addDoc(kegsCollection, {
+        beerName: keg.beerName,
+        kegSize: keg.kegSize,
+        quantity: keg.quantity
+      });
+  
       keg.id = docRef.id;
+  
+      console.log(`Keg added with ID: ${keg.id}`);
     } catch (error) {
       console.error('Error adding keg to Firestore:', error);
     }
   }
+  
 
   
   async addQuantity(id: string) {
@@ -120,13 +129,21 @@ export class KegTrackerComponent {
 
   
   async updateKegInFirestore(keg: Keg) {
-    try {
-      const kegDocRef = doc(this.firestore, 'kegs', keg.id);
-      await updateDoc(kegDocRef, {
-        quantity: keg.quantity
-      });
-    } catch (error) {
-      console.error('Error updating keg in Firestore:', error);
+  try {
+    if (!keg.id) {
+      console.error('Invalid keg ID:', keg);  // Log the keg to check for an invalid ID
+      return;
     }
+
+    const kegDocRef = doc(this.firestore, 'kegs', keg.id);  // Reference to the specific keg by ID
+    console.log('Updating keg in Firestore with ID:', keg.id);  // Log the ID being updated
+    await updateDoc(kegDocRef, {
+      quantity: keg.quantity,
+    });
+    console.log(`Keg ${keg.id} updated with new quantity: ${keg.quantity}`);
+  } catch (error) {
+    console.error('Error updating keg in Firestore:', error);
   }
+}
+
 }

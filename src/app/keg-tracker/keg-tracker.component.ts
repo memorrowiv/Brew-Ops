@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Keg } from '../models/keg.models'; 
 import { getFirestore, Firestore, collection, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environment.prod';
@@ -8,23 +9,23 @@ import { getApp } from 'firebase/app';
 @Component({
   selector: 'app-keg-tracker',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './keg-tracker.component.html',
   styleUrls: ['./keg-tracker.component.css'],
 })
 export class KegTrackerComponent {
   kegs: Keg[] = [];
-  private firestore!: Firestore; // Use definite assignment assertion
+  private firestore!: Firestore;
 
   constructor() {
     if (typeof window !== 'undefined') {
       const app = getApp(); // Reuse the already initialized app from AppComponent
-      this.firestore = getFirestore(app); // Get Firestore instance from the already initialized app
+      this.firestore = getFirestore(app);
       this.loadKegs();
     }
   }
 
-  // Loads kegs from Firestore
+  
   async loadKegs() {
     try {
       const kegsCollection = collection(this.firestore, 'kegs');
@@ -36,36 +37,43 @@ export class KegTrackerComponent {
           ...doc.data(),
         })) as Keg[];
       } else {
-        this.kegs = []; // Ensure it's empty if no data is found
+        this.kegs = []; 
         console.log('No kegs found, initializing empty state.');
       }
     } catch (error) {
       console.error('Error loading kegs:', error);
-      this.kegs = []; // Default to an empty array in case of error
+      this.kegs = []; 
     }
   }
   
 
-  // Adds a new keg to Firestore
+
   async addKegs(beerName: string, kegSize: string, quantity: number) {
     console.log('Adding keg:', beerName, kegSize, quantity);
     const newKeg: Keg = { id: '', beerName, kegSize, quantity };
     await this.addKegToFirestore(newKeg);
-    this.kegs.push(newKeg); // Add to local array for immediate update
+    this.kegs.push(newKeg);
   }
 
-  // Adds a new keg document to Firestore
+  onAddKeg(event: Event, beerName: string, kegSize: string, quantity: number) {
+    event.preventDefault(); 
+    console.log('Form submitted:', beerName, kegSize, quantity); 
+    this.addKegs(beerName, kegSize, quantity); 
+  }
+  
+
+ 
   async addKegToFirestore(keg: Keg) {
     try {
       const kegsCollection = collection(this.firestore, 'kegs');
       const docRef = await addDoc(kegsCollection, keg);
-      keg.id = docRef.id; // Assign the generated ID to the keg object
+      keg.id = docRef.id;
     } catch (error) {
       console.error('Error adding keg to Firestore:', error);
     }
   }
 
-  // Adds quantity to a specific keg
+  
   async addQuantity(id: string) {
     const keg = this.kegs.find(keg => keg.id === id);
     if (keg) {
@@ -76,7 +84,7 @@ export class KegTrackerComponent {
     }
   }
 
-  // Decreases quantity of a specific keg
+  
   async kickKeg(id: string) {
     const keg = this.kegs.find(keg => keg.id === id);
     if (keg && keg.quantity > 0) {
@@ -87,7 +95,7 @@ export class KegTrackerComponent {
     }
   }
 
-  // Updates the keg document in Firestore
+  
   async updateKegInFirestore(keg: Keg) {
     try {
       const kegDocRef = doc(this.firestore, 'kegs', keg.id);

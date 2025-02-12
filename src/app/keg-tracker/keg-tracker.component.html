@@ -5,7 +5,7 @@
     <!-- Add a new keg form -->
     <div class="add-keg-form">
       <h3>Add New Keg</h3>
-      <form (ngSubmit)="addKegs(beerName.value, kegSize.value, +quantity.value)">
+      <form (ngSubmit)="onAddKeg($event, beerName.value, kegSize.value, +quantity.value)">
         <label for="beerName">Beer Name:</label>
         <input type="text" id="beerName" #beerName required />
   

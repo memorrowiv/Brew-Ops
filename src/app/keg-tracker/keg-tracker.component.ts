@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Keg } from '../models/keg.models'; 
-import { getFirestore, Firestore, collection, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, Firestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environment.prod';
 import { getApp } from 'firebase/app'; 
 
@@ -86,14 +86,35 @@ export class KegTrackerComponent {
 
   
   async kickKeg(id: string) {
-    const keg = this.kegs.find(keg => keg.id === id);
-    if (keg && keg.quantity > 0) {
-      keg.quantity -= 1;
-      await this.updateKegInFirestore(keg);
+    const kegIndex = this.kegs.findIndex(keg => keg.id === id);
+  
+    if (kegIndex !== -1) {
+      const keg = this.kegs[kegIndex];
+  
+      if (keg.quantity > 1) {
+        keg.quantity -= 1;
+        await this.updateKegInFirestore(keg);
+      } else {
+        // Quantity is 1, so remove from Firestore and local array
+        await this.deleteKegFromFirestore(id);
+        this.kegs.splice(kegIndex, 1); // Remove from local array
+      }
     } else {
-      console.log('Keg not found or quantity already at 0');
+      console.log('Keg not found or already removed');
     }
   }
+  
+  // Function to delete keg from Firestore
+  async deleteKegFromFirestore(id: string) {
+    try {
+      const kegDocRef = doc(this.firestore, 'kegs', id);
+      await deleteDoc(kegDocRef);
+      console.log(`Keg ${id} removed from Firestore`);
+    } catch (error) {
+      console.error('Error deleting keg from Firestore:', error);
+    }
+  }
+  
 
   
   async updateKegInFirestore(keg: Keg) {

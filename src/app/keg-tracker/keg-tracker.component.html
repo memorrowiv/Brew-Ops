@@ -1,0 +1,40 @@
+<!-- keg-tracker.component.html -->
+<div class="keg-tracker">
+    <h2>Keg Tracker</h2>
+  
+    <!-- Add a new keg form -->
+    <div class="add-keg-form">
+      <h3>Add New Keg</h3>
+      <form (ngSubmit)="addKegs(beerName.value, kegSize.value, +quantity.value)">
+        <label for="beerName">Beer Name:</label>
+        <input type="text" id="beerName" #beerName required />
+  
+        <label for="kegSize">Keg Size:</label>
+        <input type="text" id="kegSize" #kegSize required />
+  
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" #quantity required />
+  
+        <button type="submit">Add Keg</button>
+      </form>
+    </div>
+  
+    <!-- Displaying the list of kegs -->
+    <div class="kegs-list">
+      <h3>Current Kegs</h3>
+      <ul>
+        <li *ngFor="let keg of kegs">
+          <div class="keg-info">
+            <strong>{{ keg.beerName }}</strong> - {{ keg.kegSize }} - Quantity: {{ keg.quantity }}
+          </div>
+          
+          <!-- Button to add quantity to a keg -->
+          <button (click)="addQuantity(keg.id)">Add One</button>
+  
+          <!-- Button to reduce quantity of a keg (kick keg) -->
+          <button (click)="kickKeg(keg.id)">Kick One</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  

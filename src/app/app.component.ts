@@ -1,13 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, doc, setDoc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { environment } from '../environments/environment.prod';
 import { KegTrackerComponent } from './keg-tracker/keg-tracker.component';
 import { TapListComponent } from './tap-list/tap-list.component';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { RouterModule } from '@angular/router';
-
 
 @Component({
   selector: 'app-root',
@@ -16,7 +14,6 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     KegTrackerComponent,
     TapListComponent,
-    AngularFirestoreModule,
     RouterModule,
   ],
   templateUrl: './app.component.html',
@@ -27,12 +24,22 @@ export class AppComponent implements OnInit {
   private firestore: Firestore;
 
   constructor() {
-   
-    const app = initializeApp(environment.firebaseConfig);
-    this.firestore = getFirestore(app); // Initialize Firestore
+    const app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
+    this.firestore = getFirestore(app); // Get Firestore instance
     console.log('Firebase initialized:', app);
   }
 
   ngOnInit() {
+  }
+
+  // Example of interacting with Firestore to save keg state
+  private async saveKegState(kegId: string, kegData: any): Promise<void> {
+    try {
+      const kegRef = doc(this.firestore, 'kegs', kegId);
+      await setDoc(kegRef, kegData); // Save keg data to Firestore
+      console.log('Keg state saved:', kegData);
+    } catch (error) {
+      console.error('Error saving keg state:', error);
+    }
   }
 }

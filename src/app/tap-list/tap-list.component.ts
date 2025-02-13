@@ -55,6 +55,33 @@ export class TapListComponent {
     }
   }
 
+  assignKegToTap(tapNumber: number, selectedKeg: Keg) {
+    
+    const currentTapNumber = selectedKeg.tapNumber;
+    
+    if (currentTapNumber && currentTapNumber !== tapNumber) {
+      this.unassignKegFromTap(currentTapNumber, selectedKeg);
+    }
+  
+    this.taps[tapNumber - 1].assignedKeg = selectedKeg;
+    selectedKeg.onTap = true;
+    selectedKeg.tapNumber = tapNumber;
+  
+    console.log(`Assigned ${selectedKeg.beerName} to tap ${tapNumber}`);
+  }
+  
+  unassignKegFromTap(tapNumber: number, keg: Keg) {
+  
+    this.taps[tapNumber - 1].assignedKeg = null;
+    
+    keg.onTap = false;
+  
+    keg.tapNumber = undefined;
+  
+    console.log(`Unassigned ${keg.beerName} from tap ${tapNumber}`);
+  }
+  
+
   
   
 

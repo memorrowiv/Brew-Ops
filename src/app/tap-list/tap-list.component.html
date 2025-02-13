@@ -1,0 +1,33 @@
+<div class="tap-list-container">
+    <h1>{{ title }}</h1>
+  
+    <div class="tap-grid">
+      <div class="tap-card" *ngFor="let tap of taps">
+        <div class="tap-header">
+          <h3>Tap {{ tap.number }}</h3>
+          <div class="last-keg-badge" [ngClass]="{ 'visible': tap.isLastKeg }">Last Keg!</div>
+        </div>
+  
+        <div class="tap-body">
+          <div class="assigned-keg">
+            <span>{{ tap.assignedKeg?.beerName || 'No keg assigned' }}</span>
+          </div>
+  
+          <div class="assign-keg">
+            <label [attr.for]="'select-keg-' + tap.number">Assign Keg to Tap {{ tap.number }}</label>
+            <select
+              [attr.id]="'select-keg-' + tap.number"
+              [(ngModel)]="tap.assignedKeg"
+              (change)="tap.assignedKeg && assignKegToTap(tap.number, tap.assignedKeg)">
+              <option *ngFor="let keg of kegs" [ngValue]="keg">{{ keg.beerName }} - {{ keg.kegSize }} L</option>
+            </select>
+          </div>
+  
+          <div class="unassign-keg">
+            <button *ngIf="tap.assignedKeg" (click)="unassignKegFromTap(tap.number, tap.assignedKeg)">Unassign Keg</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

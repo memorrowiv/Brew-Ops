@@ -4,5 +4,4 @@ export interface Keg {
     kegSize: string;
     quantity: number;
     onTap: boolean;
-    tapNumber?: number;
   }

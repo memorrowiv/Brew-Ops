@@ -29,6 +29,19 @@ export class TapListComponent {
     }
   }
 
+  async initializeTapsInFirestore() {
+    for (let i = 1; i <= this.numTaps; i++) {
+      const tapDocRef = doc(this.firestore, 'taps', `${i}`);
+      await setDoc(tapDocRef, {
+        number: i,
+        assignedKeg: null,
+        isLastKeg: false,
+      }, { merge: true });
+    }
+    this.loadTaps();
+  }
+  
+
   async loadKegs() {
     try {
       const kegsCollection = collection(this.firestore, 'kegs');
@@ -55,24 +68,32 @@ export class TapListComponent {
       const tapsSnapshot = await getDocs(tapsCollection);
   
       if (!tapsSnapshot.empty) {
-        this.taps = tapsSnapshot.docs.map(doc => ({
-          number: doc.data()['number'],
-          assignedKeg: doc.data()['assignedKeg'] || null,
-          isLastKeg: doc.data()['isLastKeg'] || false,
-        }));
+        this.taps = tapsSnapshot.docs.map(doc => {
+          const assignedKegData = doc.data()['assignedKeg'];
+          const assignedKeg = assignedKegData
+            ? this.kegs.find(keg => keg.id === assignedKegData.id) || null
+            : null;
+  
+          return {
+            number: doc.data()['number'],
+            assignedKeg: assignedKeg,
+            isLastKeg: doc.data()['isLastKeg'] || false,
+          };
+        });
+
+        
+        this.taps.sort((a, b) => a.number - b.number);
       } else {
-        // Initialize empty taps if none are found in Firestore
-        this.taps = [];
-        for (let i = 1; i <= this.numTaps; i++) {
-          this.taps.push({ number: i, assignedKeg: null, isLastKeg: false });
-        }
+        
+        this.updateTaps();
         console.log('No taps found, initializing empty state.');
       }
     } catch (error) {
       console.error('Error loading taps:', error);
-      this.taps = [];
+      this.updateTaps();
     }
   }
+  
   
 
   updateTaps() {
@@ -86,15 +107,11 @@ export class TapListComponent {
     if (!selectedKeg) {
       return;  // If no keg is selected, do nothing
     }
-    const currentTapNumber = selectedKeg.tapNumber;
 
-    if (currentTapNumber && currentTapNumber !== tapNumber) {
-      await this.unassignKegFromTap(currentTapNumber, selectedKeg);
-    }
+
 
     this.taps[tapNumber - 1].assignedKeg = selectedKeg;
     selectedKeg.onTap = true;
-    selectedKeg.tapNumber = tapNumber;
 
     // Update keg and tap in Firestore after assignment
     await this.updateKegInFirestore(selectedKeg);
@@ -106,10 +123,8 @@ export class TapListComponent {
   async unassignKegFromTap(tapNumber: number, keg: Keg) {
     this.taps[tapNumber - 1].assignedKeg = null;
     keg.onTap = false;
-    keg.tapNumber = undefined;
 
-    // Update keg and tap in Firestore after unassignment
-    await this.updateKegInFirestore(keg);
+    
     await this.updateTapInFirestore(tapNumber, null);
 
     console.log(`Unassigned ${keg.beerName} from tap ${tapNumber}`);
@@ -126,7 +141,6 @@ export class TapListComponent {
       console.log('Updating keg in Firestore with ID:', keg.id);  // Log the ID being updated
       await updateDoc(kegDocRef, {
         onTap: keg.onTap,
-        tapNumber: keg.tapNumber,
       });
       console.log(`Keg ${keg.id} updated in Firestore`);
     } catch (error) {

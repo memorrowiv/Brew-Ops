@@ -6,10 +6,17 @@ import { Tap } from '../models/tap.models';
 import { getFirestore, Firestore, collection, getDocs, updateDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-tap-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatBadgeModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './tap-list.component.html',
   styleUrls: ['./tap-list.component.css'],
 })

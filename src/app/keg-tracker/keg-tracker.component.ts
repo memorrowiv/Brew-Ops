@@ -7,10 +7,18 @@ import { environment } from '../../environments/environment.prod';
 import { getApp } from 'firebase/app'; 
 import { on } from 'events';
 
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-keg-tracker',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatListModule, MatIconModule],
   templateUrl: './keg-tracker.component.html',
   styleUrls: ['./keg-tracker.component.css'],
 })

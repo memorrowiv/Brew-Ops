@@ -26,6 +26,10 @@
         <div class="unassign-keg">
           <button *ngIf="tap.assignedKeg" (click)="unassignKegFromTap(tap.number, tap.assignedKeg)">Unassign Keg</button>
         </div>
+
+        <div class="kick-keg">
+          <button *ngIf="tap.assignedKeg" (click)="confirmKickKeg(tap.assignedKeg.id, tap.number)">Kick Keg</button>
+        </div>
       </div>
     </div>
   </div>

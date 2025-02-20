@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Keg } from '../models/keg.models';
 import { Tap } from '../models/tap.models';
-import { getFirestore, Firestore, collection, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, Firestore, collection, getDocs, updateDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 
 @Component({
@@ -141,6 +141,7 @@ export class TapListComponent {
       console.log('Updating keg in Firestore with ID:', keg.id);  // Log the ID being updated
       await updateDoc(kegDocRef, {
         onTap: keg.onTap,
+        quantity: keg.quantity,  // Update the quantity in Firestore
       });
       console.log(`Keg ${keg.id} updated in Firestore`);
     } catch (error) {
@@ -175,5 +176,41 @@ checkLastKeg() {
   return !!lastKeg;  // Returns true if a last keg exists, false otherwise
 }
 
+async kickKeg(id: string, tapNumber: number) {
+  const kegIndex = this.kegs.findIndex(keg => keg.id === id);
 
+  if (kegIndex !== -1) {
+    const keg = this.kegs[kegIndex];
+
+    if (keg.quantity > 1) {
+      keg.quantity -= 1;
+      await this.updateKegInFirestore(keg);
+    } else {
+      // Quantity is 1, so remove from Firestore and local array
+      this.unassignKegFromTap(tapNumber, keg);
+      await this.deleteKegFromFirestore(id);
+      this.kegs.splice(kegIndex, 1);
+      await this.updateKegInFirestore(keg); 
+    }
+  } else {
+    console.log('Keg not found or already removed');
+  }
+}
+
+async deleteKegFromFirestore(id: string) {
+    try {
+      const kegDocRef = doc(this.firestore, 'kegs', id);
+      await deleteDoc(kegDocRef);
+      console.log(`Keg ${id} removed from Firestore`);
+    } catch (error) {
+      console.error('Error deleting keg from Firestore:', error);
+    }
+  }
+
+async confirmKickKeg(id: string, tapNumber: number) {
+  const confirmation = confirm('Are you sure you want to kick this keg?');
+  if (confirmation) {
+    await this.kickKeg(id, tapNumber);
+  }
+}
 }

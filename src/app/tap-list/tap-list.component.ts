@@ -18,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, FormsModule, MatCardModule, MatBadgeModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './tap-list.component.html',
-  styleUrls: ['./tap-list.component.css'],
+  styleUrls: ['./tap-list.component.scss'],
 })
 export class TapListComponent {
   title = 'Tap List';

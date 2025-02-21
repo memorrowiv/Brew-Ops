@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatListModule, MatIconModule],
   templateUrl: './keg-tracker.component.html',
-  styleUrls: ['./keg-tracker.component.css'],
+  styleUrls: ['./keg-tracker.component.scss'],
 })
 export class KegTrackerComponent {
   kegSizes = ['Half Barrel (15.5 gal)', 'Quarter Barrel (7.75 gal)', 'Sixth Barrel (5.16 gal)', 'Mini Keg (1.32 gal)'];

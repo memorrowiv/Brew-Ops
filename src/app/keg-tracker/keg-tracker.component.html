@@ -34,18 +34,21 @@
     <mat-card-title>Current Kegs</mat-card-title>
     <mat-list>
       <mat-list-item *ngFor="let keg of kegs">
-        <div class="keg-info">
-          <strong>{{ keg.beerName }}</strong> - {{ keg.kegSize }} - Quantity: {{ keg.quantity }}
-        </div>
-        <div class="keg-actions">
-          <button mat-mini-fab color="accent" (click)="addQuantity(keg.id)">
-            <mat-icon>add</mat-icon>
-          </button>
-          <button mat-mini-fab color="warn" (click)="kickKeg(keg.id)">
-            <mat-icon>remove</mat-icon>
-          </button>
+        <div class="keg-item-wrapper">
+          <div class="keg-info">
+            <strong>{{ keg.beerName }}</strong> - {{ keg.kegSize }} - Quantity: {{ keg.quantity }}
+          </div>
+          <div class="keg-actions">
+            <button mat-mini-fab color="accent" (click)="addQuantity(keg.id)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" (click)="kickKeg(keg.id)">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-list-item>
     </mat-list>
+    
   </mat-card>
 </div>

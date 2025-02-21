@@ -1,0 +1,51 @@
+<div class="tap-list-container">
+  <h1 class="text-3xl font-bold mb-4">{{ title }}</h1>
+
+  <div class="tap-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <mat-card *ngFor="let tap of taps" class="tap-card">
+      <mat-card-header>
+        <mat-card-title>
+          Tap {{ tap.number }}
+          <span *ngIf="tap.isLastKeg" class="ml-2">
+            <span matBadge="Last Keg!" matBadgeColor="warn" matBadgeOverlap="false"></span>
+          </span>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="text-lg">
+          {{ tap.assignedKeg?.beerName || 'No keg assigned' }}
+        </p>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Assign Keg to Tap {{ tap.number }}</mat-label>
+          <mat-select
+            [(value)]="tap.assignedKeg"
+            (selectionChange)="tap.assignedKeg && assignKegToTap(tap.number, tap.assignedKeg)">
+            <mat-option *ngFor="let keg of kegs" [value]="keg">
+              {{ keg.beerName }} - {{ keg.kegSize }} L
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          color="warn"
+          *ngIf="tap.assignedKeg"
+          (click)="unassignKegFromTap(tap.number, tap.assignedKeg)">
+          Unassign Keg
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          *ngIf="tap.assignedKeg"
+          (click)="confirmKickKeg(tap.assignedKeg.id, tap.number)">
+          Kick Keg
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

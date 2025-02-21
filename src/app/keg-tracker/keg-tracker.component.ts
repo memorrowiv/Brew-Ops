@@ -5,11 +5,20 @@ import { Keg } from '../models/keg.models';
 import { getFirestore, Firestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environment.prod';
 import { getApp } from 'firebase/app'; 
+import { on } from 'events';
+
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-keg-tracker',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatListModule, MatIconModule],
   templateUrl: './keg-tracker.component.html',
   styleUrls: ['./keg-tracker.component.css'],
 })
@@ -51,7 +60,7 @@ export class KegTrackerComponent {
 
   async addKegs(beerName: string, kegSize: string, quantity: number) {
     console.log('Adding keg:', beerName, kegSize, quantity);
-    const newKeg: Keg = { id: '', beerName, kegSize, quantity };
+    const newKeg: Keg = { id: '', beerName, kegSize, quantity, onTap: false };
     await this.addKegToFirestore(newKeg);
     this.kegs.push(newKeg);
   }
@@ -71,7 +80,8 @@ export class KegTrackerComponent {
       const docRef = await addDoc(kegsCollection, {
         beerName: keg.beerName,
         kegSize: keg.kegSize,
-        quantity: keg.quantity
+        quantity: keg.quantity,
+        onTap: keg.onTap,
       });
   
       keg.id = docRef.id;

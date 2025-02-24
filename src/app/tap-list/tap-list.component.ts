@@ -32,7 +32,7 @@ export class TapListComponent {
       const app = getApp(); // Reuse the already initialized app from AppComponent
       this.firestore = getFirestore(app);
       this.loadKegs();
-      this.loadTaps(); // Load taps on initialization
+      this.loadTaps();
     }
   }
 
@@ -157,30 +157,31 @@ export class TapListComponent {
   }
 
   async updateTapInFirestore(tapNumber: number, keg: Keg | null) {
-  try {
-    const tapDocRef = doc(this.firestore, 'taps', `${tapNumber}`);
-    
-    // Ensure 'isLastKeg' is always a boolean value
-    const isLastKeg = this.checkLastKeg();
-    
-    // Use merge: true to avoid overwriting other properties of the tap
-    await setDoc(tapDocRef, {
-      assignedKeg: keg,
-      isLastKeg: isLastKeg,  // Ensure it's a valid boolean
-    }, { merge: true });
-    
-    console.log(`Tap ${tapNumber} updated in Firestore`);
-  } catch (error) {
-    console.error('Error updating tap in Firestore:', error);
-  }
-}
-
-checkLastKeg() {
-  // Ensure we return a valid boolean value for 'isLastKeg'
-  const lastKeg = this.kegs.find(keg => keg.onTap && keg.quantity <= 1);
+    try {
+      const tapDocRef = doc(this.firestore, 'taps', `${tapNumber}`);
+      
+      // Check if the keg assigned to this tap is the last one in stock
+      const isLastKeg = this.checkLastKeg(tapNumber);
   
-  // If no last keg is found, return false
-  return !!lastKeg;  // Returns true if a last keg exists, false otherwise
+      await setDoc(tapDocRef, {
+        assignedKeg: keg,
+        isLastKeg: isLastKeg,  // Update this tap with the correct last keg flag
+      }, { merge: true });
+      
+      console.log(`Tap ${tapNumber} updated in Firestore`);
+    } catch (error) {
+      console.error('Error updating tap in Firestore:', error);
+    }
+  }
+  
+
+checkLastKeg(tapNumber: number): boolean {
+  const assignedKeg = this.taps[tapNumber - 1]?.assignedKeg;
+  if (!assignedKeg) return false;
+
+  // Find out if the assigned keg is the last one in stock
+  const isLastKeg = assignedKeg.quantity <= 1;
+  return isLastKeg;
 }
 
 async kickKeg(id: string, tapNumber: number) {

@@ -193,6 +193,7 @@ async kickKeg(id: string, tapNumber: number) {
     if (keg.quantity > 1) {
       keg.quantity -= 1;
       await this.updateKegInFirestore(keg);
+      await this.updateTapInFirestore(tapNumber, keg);
     } else {
       // Quantity is 1, so remove from Firestore and local array
       this.unassignKegFromTap(tapNumber, keg);
